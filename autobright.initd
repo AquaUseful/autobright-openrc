@@ -1,0 +1,43 @@
+#!/sbin/openrc-run
+
+pidfile="/run/${RC_SVCNAME}.pid"
+command="/usr/bin/autobright"
+command_background=true
+command_args="--video-dev='$VIDEO_DEV' \
+--backlight-type='$BACKLIGHT_TYPE' \
+--min='$MIN' \
+--steps='$STEPS' \
+--step-delay='$STEP_DELAY' \
+--pause='$PAUSE'"
+
+checkconfig() {
+    for param in VIDEO_DEV BACKLIGHT_TYPE MIN STEPS STEP_DELAY PAUSE CHECK_SCREEN_STATE MIN_AMBIENT_DIFF; do
+        if [[ -z ${!param+x} ]]; then
+            eerror "Missing $param paramater in config"
+            return 1
+        fi
+    done
+    if [[ ! -c "$VIDEO_DEV" ]]; then
+        eerror ""$VIDEO_DEV" is not a valid video device"
+        return 1
+    fi
+    if [[ ! -d "/sys/class/backlight/${BACKLIGHT_TYPE}_backlight" ]] ; then
+        eerror ""$BACKLIGHT_TYPE" is not a valid backlight type"
+        return 1
+    fi
+    if ( $CHECK_SCREEN_STATE ); then
+        command_args="$command_args --check-scr-state"
+    fi
+}
+
+start_pre() {
+    if [[ "${RC_CMD}" != "restart" ]]; then
+        checkconfig || return $?
+    fi
+}
+
+stop_pre() {
+    if [[ "${RC_CMD}" == "restart" ]]; then
+        checkconfig || return $?
+    fi
+}

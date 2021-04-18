@@ -1,0 +1,27 @@
+# /etc/conf.d/autobright: config for /etc/init.d/autobright
+
+# Path to a camera from which the ambient value will be read
+VIDEO_DEV="/dev/video0"
+
+# Type of the backlight driver (usually intel or amd)
+BACKLIGHT_TYPE="intel"
+
+# Minimal brightness level
+MIN=85
+
+# Count of steps of smooth brightness change (higher - smoother)
+STEPS=100
+
+# Delay between steps of smooth change
+STEP_DELAY=0.01
+
+# Addititonal delay between measures
+PAUSE=9
+
+# Skip meausers when screen is off (true - skip, false - don't skip)
+CHECK_SCREEN_STATE=true
+
+# minimal difference between current and last ambient values required to change btighness 
+# (helps to ignore small ambient changes)
+MIN_AMBIENT_DIFF=15
+
