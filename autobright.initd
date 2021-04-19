@@ -8,7 +8,8 @@ command_args="--video-dev='$VIDEO_DEV' \
 --min='$MIN' \
 --steps='$STEPS' \
 --step-delay='$STEP_DELAY' \
---pause='$PAUSE'"
+--pause='$PAUSE' \
+----min-ambient-diff='$MIN_AMBIENT_DIFF'"
 
 checkconfig() {
     for param in VIDEO_DEV BACKLIGHT_TYPE MIN STEPS STEP_DELAY PAUSE CHECK_SCREEN_STATE MIN_AMBIENT_DIFF; do
@@ -25,6 +26,9 @@ checkconfig() {
         eerror ""$BACKLIGHT_TYPE" is not a valid backlight type"
         return 1
     fi
+}
+
+set_args() {
     if ( $CHECK_SCREEN_STATE ); then
         command_args="$command_args --check-scr-state"
     fi
@@ -34,6 +38,7 @@ start_pre() {
     if [[ "${RC_CMD}" != "restart" ]]; then
         checkconfig || return $?
     fi
+    set_args
 }
 
 stop_pre() {
